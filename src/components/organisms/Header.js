@@ -23,7 +23,7 @@ export const Header = () => {
       <Styled.Right>
         <div>Nombre d'articles dans votre panier : {itemsCount}</div>
         <a
-          href="https://github.com/stleport/"
+          href="https://github.com/stleport/dummyshop"
           target="_blank"
           rel="noopener noreferrer"
           alt="Project repo"
