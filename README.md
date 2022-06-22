@@ -1,6 +1,6 @@
-## Scripts
+## Demo
 
-Demo : https://dull-wish.surge.sh/
+https://dull-wish.surge.sh/
 
 ## Scripts
 
