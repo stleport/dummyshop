@@ -1,70 +1,81 @@
-# Getting Started with Create React App
+## Scripts
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+`npm start` : lancement de l'app en mode développement
 
-## Available Scripts
+`npm test` : exécution des tests
 
-In the project directory, you can run:
+`num run test:coverage` : tests et couverture. Un seuil global de couverture a été fixé arbitrairement à 80% pour chaque métrique
 
-### `yarn start`
+`npm run validate` : exécute séquentiellement le linter `&&` les tests `&&` le build 
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+`npm run cy:run` et `npm run cy:open` : l'installation est symbolique... pas encore de tests `e2e` 
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Structure du projet
 
-### `yarn test`
+### Arborescence
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```
+.
+├── assets
+│   ├── font
+│   └── images
+├── components      /* atomic design architecture */
+│   ├── atoms
+│   ├── molecules
+│   ├── organisms
+│   ├── pages
+│   └── templates
+├── constants       /* global constants */
+├── store           /* redux */
+├── test            /* test helpers */
+└── utils           /* global helpers */
+```
 
-### `yarn build`
+### Méthode
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Approche [Atomic design](https://atomicdesign.bradfrost.com/)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Avec cette méthode, les composants sont bien organisés et accessibles. Ca fonctionne pas mal sur les "petits" projets, mais pas encore expérimenté sur un projet complexe.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Remarques : dans la partie `pages`, je n'ai pas poussé très loin la composition "atomique" de `Product`, comparativement à `Home` 
 
-### `yarn eject`
+## Gestion des styles
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Les styles sont gérés avec `styled-components`.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Pour la lisibilité, ils ont été regroupés dans des objets littéraux au sein des composants, mais ils gagneraient à être définis séparémment pour faciliter les mécanismes d'héritage entre `styled-components`.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Il y a une gestion basique des mécanismes responsives. 
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Pour le choix de la librairie, j'ai hésité avec `tailwind css` et ses classes définies *inline*. Les règles sont plus faciles à écrire/maintenir mais moins lisibles.
 
-## Learn More
+## Etat de l'app
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- `redux` pour les données UI 
+- `react-query` pour les données serveur 
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Redux
 
-### Code Splitting
+La gestion du panier est minimaliste, suffisant j'espère pour illustrer une utilisation basique via le panier + les tests qui vont avec
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### React Query
 
-### Analyzing the Bundle Size
+Permet de gérer :
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+- la récupération des données
+- leur associer un état `idle`, `loading`, `success`, `error`
+- la mise à jour et la mise en cache des données
 
-### Making a Progressive Web App
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Tests
 
-### Advanced Configuration
+- tests statiques : `eslint`
+- test unitaires et d'intégration : `react-testing-library`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Améliorations possibles
 
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- tests e2e
+- pas mal de possibilités avec `dummyjson`... si j'avais un peu plus de temps, je me serais sans doute lancé sur la recherche de produit, l'authentification/inscription, une gestion avancée du panier
+- tests à compléter, notamment `index`, `Home` et `App`. Certains ont été définis en `todos`, d'autres ont été `skip`. Ex : j'ai récupéré le hook `useClient` (pour les appels API). Des tests étaient associés à ce hook mais il ne passent pas sur cet environnement. Je ne me suis pas attardé là-dessus
+- si c'était un POC, je me serais peut-être lancé sur une persistence des données via un service worker (msw) ou localstorage
+- score lighthouse accessibilité et performances, surtout sur mobile

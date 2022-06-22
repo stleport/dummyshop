@@ -2,20 +2,31 @@
   "name": "dummyshop",
   "version": "0.1.0",
   "private": true,
+  "author": "SLePort",
   "dependencies": {
+    "@reduxjs/toolkit": "^1.8.2",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-query": "^3.39.1",
+    "react-redux": "^8.0.2",
+    "react-router-dom": "6",
     "react-scripts": "5.0.1",
+    "styled-components": "^5.3.5",
     "web-vitals": "^2.1.0"
   },
   "scripts": {
     "start": "react-scripts start",
+    "lint": "eslint . --cache-location node_modules/.cache/eslint",
+    "cy:run": "cypress run",
+    "cy:open": "react-scripts start && cypress open",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "test:coverage": "react-scripts test --watch=false --coverage",
+    "eject": "react-scripts eject",
+    "validate": "npm run lint && npm run test && npm run build"
   },
   "eslintConfig": {
     "extends": [
@@ -34,5 +45,22 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^7.3.0",
+    "cypress": "^10.2.0",
+    "eslint-plugin-cypress": "^2.12.1",
+    "msw": "^0.42.1",
+    "prettier": "^2.7.1"
+  },
+  "jest": {
+    "coverageThreshold": {
+      "global": {
+        "statements": 80,
+        "branches": 80,
+        "lines": 80,
+        "functions": 80
+      }
+    }
   }
 }
