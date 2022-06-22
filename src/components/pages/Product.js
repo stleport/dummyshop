@@ -88,6 +88,8 @@ export const Styled = {
     img {
       margin-right: 1rem;
       width: 100%;
+      border: 1px solid #eee;
+      padding: 1rem;
     }
     @media only screen and (min-width: ${theme.device.tablet}) {
       flex-direction: row;

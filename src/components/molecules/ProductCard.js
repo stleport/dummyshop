@@ -39,9 +39,10 @@ const Styled = {
     background-color: white;
     border-radius: 0 0 0.4rem 0.4rem;
     box-shadow: 0 2px 4px 0 rgba(139, 159, 196, 0.2);
-    margin-bottom: 2.4rem !important;
+    margin-left: 0;
     @media only screen and (min-width: ${theme.device.tablet}) {
       flex: 0 0 200px;
+      margin: 1rem 0.8rem;
     }
   `,
 };

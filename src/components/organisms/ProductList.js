@@ -45,7 +45,6 @@ const Styled = {
     display: flex;
     flex-wrap: wrap;
     align-items: stretch;
-    justify-content: space-between;
   `,
   FullSpaceContainer: styled.div`
     display: flex;
