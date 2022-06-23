@@ -13,7 +13,11 @@ const server = setupServer(
 
 jest.mock("react-query");
 
-test.skip("calls fetch at the endpoint with the arguments for GET requests", async () => {
+beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+afterAll(() => server.close());
+afterEach(() => server.resetHandlers());
+
+test("calls fetch at the endpoint with the arguments for GET requests", async () => {
   const endpoint = "test-endpoint";
   const mockResult = { mockValue: "VALUE" };
   server.use(
@@ -27,7 +31,7 @@ test.skip("calls fetch at the endpoint with the arguments for GET requests", asy
   expect(result).toEqual(mockResult);
 });
 
-test.skip("allows for config overrides", async () => {
+test("allows for config overrides", async () => {
   let request;
   const endpoint = "test-endpoint";
   const mockResult = { mockValue: "VALUE" };
@@ -51,7 +55,7 @@ test.skip("allows for config overrides", async () => {
   );
 });
 
-test.skip("when data is provided, it is stringified and the method defaults to POST", async () => {
+test("when data is provided, it is stringified and the method defaults to POST", async () => {
   const endpoint = "test-endpoint";
   server.use(
     rest.post(`${apiUrl}/${endpoint}`, async (req, res, ctx) => {
@@ -64,7 +68,7 @@ test.skip("when data is provided, it is stringified and the method defaults to P
   expect(result).toEqual(data);
 });
 
-test.skip(`correctly rejects the promise if there's an error`, async () => {
+test(`correctly rejects the promise if there's an error`, async () => {
   const testError = { message: "Test error" };
   const endpoint = "test-endpoint";
   server.use(

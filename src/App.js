@@ -1,6 +1,6 @@
 import React, { Suspense } from "react";
-
-const ShoppingList = React.lazy(() => import("./components/pages/Home"));
+import ShoppingList from "./components/pages/Home";
+// const ShoppingList = React.lazy(() => import("./components/pages/Home"));
 
 export function App() {
   return (

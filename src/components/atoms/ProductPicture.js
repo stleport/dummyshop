@@ -19,8 +19,9 @@ const Styled = {
   `,
   Img: styled.img`
     width: 100%;
-    height: 9rem;
+    height: 10rem;
     object-fit: cover;
+    margin-bottom: 0.2rem;
   `,
 };
 ProductPicture.propTypes = {

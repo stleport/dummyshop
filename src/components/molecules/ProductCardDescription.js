@@ -26,8 +26,9 @@ const Styled = {
       flex-grow: 1;
       h2 {
         line-height: 1.6rem;
-        margin: 0.5rem 0;
-        font-size: 1.4rem;
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+        font-size: 1.2rem;
       }
       > div:first-of-type {
         font-style: normal;
