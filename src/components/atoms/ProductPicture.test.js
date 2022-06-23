@@ -2,7 +2,6 @@ import React from "react";
 import { screen } from "@testing-library/react";
 import { render } from "../../test/helpers";
 import ProductPicture from "./ProductPicture";
-import { DEFAULT_PICTURE } from "../../constants";
 
 test("renders the product picture", async () => {
   const props = {
