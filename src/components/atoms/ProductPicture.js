@@ -22,8 +22,8 @@ const Styled = {
     width: 100%;
     height: 8rem;
     background-image: url(${(props) => props.source || DEFAULT_PICTURE});
+    background-position: center center;
     background-size: auto 100%;
-    background-position: center;
     background-repeat: no-repeat;
   `,
 };

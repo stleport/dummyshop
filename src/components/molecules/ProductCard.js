@@ -29,20 +29,20 @@ const ProductCard = ({ product }) => {
 };
 
 const Styled = {
-  ProductCard: styled.div`
-    flex: 0 0 100%;
+  ProductCard: styled.article`
     display: flex;
     cursor: pointer;
     flex-direction: column;
-    margin-bottom: 20px;
-    border: 1px solid #eee;
-    background-color: white;
-    border-radius: 0 0 0.4rem 0.4rem;
-    box-shadow: 0 2px 4px 0 rgba(139, 159, 196, 0.2);
-    margin-left: 0;
-    @media only screen and (min-width: ${theme.device.tablet}) {
-      flex: 0 0 200px;
-      margin: 1rem 0.8rem;
+    border-radius: 0 0 0.5rem 0.5rem;
+    box-shadow: 0 2px 4px 0 rgba(139, 159, 196, 0.45);
+    box-sizing: border-box;
+    margin: 0.8rem 0.5em;
+    flex: 1 0 100%;
+    @media only screen and (min-width: ${theme.device.mobile}) {
+      max-width: calc(50% - 1em);
+    }
+    @media only screen and (min-width: ${theme.device.desktop}) {
+      max-width: calc(25% - 1em);
     }
   `,
 };

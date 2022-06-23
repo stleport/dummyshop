@@ -44,7 +44,6 @@ const Styled = {
   CardList: styled.section`
     display: flex;
     flex-wrap: wrap;
-    align-items: stretch;
   `,
   FullSpaceContainer: styled.div`
     display: flex;

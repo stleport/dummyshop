@@ -4,24 +4,44 @@ import styled from "styled-components/macro";
 
 const ProductDescription = ({ title, description, stock, price }) => (
   <Styled.ProductDescription>
-    <h2>{title}</h2>
-    <div name="description">{description}</div>
-    <div>{`${stock} exemplaires en stock`}</div>
+    <div>
+      <h2>{title}</h2>
+      <div name="description">{description}</div>
+      <div>{`${stock} exemplaires en stock`}</div>
+    </div>
     <div>{`${price} €`}</div>
   </Styled.ProductDescription>
 );
 
 const Styled = {
   ProductDescription: styled.div`
+    flex: 1;
     padding: 1rem;
     line-height: 1.3rem;
-    h2 {
-      line-height: 1.6rem;
-      margin-top: 0;
+    font-size: 1rem;
+    display: flex;
+    flex-direction: column;
+    flex-flow: column nowrap;
+    > div:first-child {
+      flex-grow: 1;
+      h2 {
+        line-height: 1.6rem;
+        margin: 0.5rem 0;
+        font-size: 1.4rem;
+      }
+      > div:first-of-type {
+        font-style: normal;
+        margin-bottom: 0.5rem;
+      }
+      > div:nth-of-type(2) {
+        font-style: italic;
+      }
     }
-    div:last-of-type {
-      margin-top: 0.5rem;
+    > div:last-child {
+      margin-top: 1rem;
       font-weight: bold;
+      font-size: 1.4rem;
+      align-self: flex-end;
     }
   `,
 };

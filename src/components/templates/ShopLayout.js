@@ -36,7 +36,7 @@ const Styled = {
 
     @media only screen and (min-width: ${theme.device
         .desktop}) and (max-width: ${theme.device.extraLargeDesktop}) {
-      max-width: 933px;
+      max-width: 1000px;
     }
 
     @media only screen and (min-width: ${theme.device.extraLargeDesktop}) {
