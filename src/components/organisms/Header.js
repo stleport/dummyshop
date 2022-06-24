@@ -21,7 +21,7 @@ export const Header = () => {
         <NavLinks />
       </Styled.Links>
       <Styled.Right>
-        <div>Nombre d'articles dans votre panier : {itemsCount}</div>
+        <div>Votre panier : {itemsCount} articles</div>
         <a
           href="https://github.com/stleport/dummyshop"
           target="_blank"

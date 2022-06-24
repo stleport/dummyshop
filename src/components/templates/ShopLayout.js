@@ -17,30 +17,25 @@ const ShopLayout = ({ children }) => (
 
 const Styled = {
   PageWrapper: styled.div`
-    flex-direction: column;
-    margin-top: 3rem;
-    margin-left: auto !important;
-    margin-right: auto !important;
     min-height: 100vh;
-
-    @media only screen and (max-width: ${theme.device.tablet}) {
-      width: auto !important;
-      margin-left: 1em !important;
-      margin-right: 1em !important;
-    }
-
-    @media only screen and (min-width: ${theme.device
-        .tablet}) and (max-width: ${theme.device.desktop}) {
+    width: auto !important;
+    margin-top: 3rem;
+    margin: 3rem 1rem;
+    @media only screen and (min-width: ${theme.device.tablet}) {
+      margin: 3rem auto;
       max-width: 723px;
     }
 
-    @media only screen and (min-width: ${theme.device
-        .desktop}) and (max-width: ${theme.device.extraLargeDesktop}) {
-      max-width: 1000px;
+    @media only screen and (min-width: ${theme.device.desktop}) {
+      max-width: 950px;
+    }
+
+    @media only screen and (min-width: ${theme.device.largeDesktop}) {
+      max-width: 1100px;
     }
 
     @media only screen and (min-width: ${theme.device.extraLargeDesktop}) {
-      max-width: 1127px;
+      max-width: 1500px;
     }
   `,
 };

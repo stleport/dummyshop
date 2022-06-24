@@ -5,6 +5,8 @@ import ProductList from "./ProductList";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
 import { faker } from "@faker-js/faker";
+import store from "../../store";
+import { Provider } from "react-redux";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -37,7 +39,11 @@ afterEach(() => server.resetHandlers());
 test("renders product list", async () => {
   const originalError = console.error;
   console.error = jest.fn();
-  render(<ProductList onIncrementCart={() => void 0} />);
+  render(
+    <Provider store={store}>
+      <ProductList />
+    </Provider>
+  );
   expect(screen.getByTestId(/loading/i)).toBeInTheDocument();
   await waitFor(() => {
     expect(

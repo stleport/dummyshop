@@ -1,4 +1,6 @@
 import * as React from "react";
+import { useDispatch } from "react-redux";
+import * as Cart from "../store/cartSlice";
 
 function useSafeDispatch(dispatch) {
   const mounted = React.useRef(false);
@@ -77,4 +79,18 @@ function useAsync(initialState) {
   };
 }
 
-export { useAsync };
+function useCart() {
+  const dispatch = useDispatch();
+  const incrementCart = (id) => (e) => {
+    e.stopPropagation();
+    dispatch(Cart.incrementCart(id));
+  };
+  const decrementCart = (id) => (e) => {
+    e.stopPropagation();
+    dispatch(Cart.decrementCart(id));
+  };
+
+  return { incrementCart, decrementCart };
+}
+
+export { useAsync, useCart };

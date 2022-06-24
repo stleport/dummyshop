@@ -2,21 +2,20 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components/macro";
 
-const ProductDescription = ({ title, description, stock, price }) => (
+const ProductDescription = ({ title, description, stock }) => (
   <Styled.ProductDescription>
     <div>
       <h2>{title}</h2>
       <div name="description">{description}</div>
       <div>{`${stock} exemplaires en stock`}</div>
     </div>
-    <div>{`${price} €`}</div>
   </Styled.ProductDescription>
 );
 
 const Styled = {
   ProductDescription: styled.div`
     flex: 1;
-    padding: 1rem;
+    padding: 0.5rem;
     line-height: 1.3rem;
     font-size: 1rem;
     display: flex;
@@ -38,12 +37,6 @@ const Styled = {
         font-style: italic;
       }
     }
-    > div:last-child {
-      margin-top: 1rem;
-      font-weight: bold;
-      font-size: 1.4rem;
-      align-self: flex-end;
-    }
   `,
 };
 
@@ -51,7 +44,6 @@ ProductDescription.propTypes = {
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
   stock: PropTypes.number.isRequired,
-  price: PropTypes.number.isRequired,
 };
 
 export default ProductDescription;

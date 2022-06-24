@@ -2,27 +2,23 @@ import React from "react";
 import styled from "styled-components/macro";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { useClient } from "../../utils/api-client";
 import * as Cart from "../../store/cartSlice";
 import { theme } from "../../constants/colors";
 import { Loader } from "../atoms/Spinner";
+import { useCart } from "../../utils/hooks";
+import ProductButton from "../atoms/ProductButton";
 
-const Product = (props) => {
+const Product = () => {
   const { id } = useParams();
-  const dispatch = useDispatch();
   const client = useClient();
+  const { incrementCart, decrementCart } = useCart();
   const items = useSelector(Cart.selectItems);
-  const item = items.find((item) => item.id === id);
+  const item = items.find((item) => item.id === Number(id));
   const { data: product, status } = useQuery(["product", id], () =>
     client(`products/${id}`)
   );
-  const onIncrementCart = (e) => {
-    dispatch(Cart.incrementCart(id));
-  };
-  const decrementCart = (e) => {
-    dispatch(Cart.decrementCart(id));
-  };
 
   return (
     <>
@@ -34,7 +30,12 @@ const Product = (props) => {
         <Styled.Product>
           <h1>{product?.title}</h1>
           <Styled.CartQuantity style={{ display: "flex" }}>
-            <button onClick={onIncrementCart}>+</button>
+            <ProductButton
+              label="-"
+              available={product.quantity > 0}
+              onChangeQuantity={decrementCart(product.id)}
+            />
+
             <span
               aria-label="count"
               style={{
@@ -46,7 +47,12 @@ const Product = (props) => {
             >
               {item?.quantity ?? "0"}
             </span>
-            <button onClick={decrementCart}>-</button>
+            <ProductButton
+              primary
+              label="+"
+              available={product.quantity > 0}
+              onChangeQuantity={incrementCart(product.id)}
+            />
           </Styled.CartQuantity>
           <Styled.ProductDescription>
             <img
@@ -71,16 +77,6 @@ export const Styled = {
   `,
   CartQuantity: styled.div`
     margin-bottom: 1.4rem;
-    button {
-      display; flex;
-      align-items; center;
-      justify-content: center;
-      width: 2rem;
-      cursor: pointer;
-      background-color: white;
-      border: 1px solid ${theme.colors.grey};
-      height: 2rem;
-    }
   `,
   ProductDescription: styled.div`
     display: flex;
@@ -96,8 +92,6 @@ export const Styled = {
     }
   `,
   Product: styled.div`
-    display: flex;
-    flex-direction: column;
     img {
       width: 100%;
       align-self: center;

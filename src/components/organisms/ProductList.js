@@ -4,6 +4,7 @@ import { useQuery } from "react-query";
 import { useClient } from "../../utils/api-client";
 import ProductCard from "../molecules/ProductCard";
 import { Loader } from "../atoms/Spinner";
+import { theme } from "../../constants/colors";
 
 const ProductList = () => {
   const client = useClient();
@@ -35,15 +36,28 @@ const ProductList = () => {
 const Styled = {
   H1: styled.h1`
     font-size: 2.5rem;
-    text-align: left;
     font-family: "Abel";
   `,
   Pagecount: styled.p`
     text-align: left;
   `,
   CardList: styled.section`
-    display: flex;
-    flex-wrap: wrap;
+    display: block;
+    @media only screen and (min-width: ${theme.device.tablet}) {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-auto-rows: auto;
+      grid-gap: 1.5rem;
+    }
+    @media only screen and (min-width: ${theme.device.desktop}) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @media only screen and (min-width: ${theme.device.largeDesktop}) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    @media only screen and (min-width: ${theme.device.extraLargeDesktop}) {
+      grid-template-columns: repeat(5, 1fr);
+    }
   `,
   FullSpaceContainer: styled.div`
     display: flex;

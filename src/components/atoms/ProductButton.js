@@ -1,34 +1,53 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Button from "./Button";
+import styled from "styled-components";
 
 const ProductButton = ({ primary, available, label, onChangeQuantity }) => {
   return (
     <React.Fragment>
-      {/* <ButtonIcon 
-        iconName={iconName}
-        onChangeQuantity={onChangeQuantity}
-        available={available}
+      <Styled.ProductButton
+        onClickButton={onChangeQuantity}
         primary={primary}
-      /> */}
-      <Button onClickButton={onChangeQuantity}>{label}</Button>
+        available={available}
+      >
+        {label}
+      </Styled.ProductButton>
     </React.Fragment>
   );
 };
 
+const Styled = {
+  ProductButton: styled(Button)`
+    border: 0;
+    height: 2.8rem;
+    padding: 0 0.8rem;
+    cursor: pointer;
+    align-items: center;
+      props.primary ? theme.colors.primary : theme.colors.secondary};
+    &:focus,
+    &:active {
+      outline: none;
+      box-shadow: none;
+    }
+    :disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+  }`,
+};
+
 ProductButton.defaultProps = {
-  enabled: true,
-  onSubQuantity: null,
-  onAddToCart: null,
   primary: false,
+  available: false,
+  onChangeQuantity: null,
 };
 
 ProductButton.propTypes = {
-  iconName: PropTypes.string.isRequired,
   primary: PropTypes.bool,
-  enabled: PropTypes.bool,
-  onAddToCart: PropTypes.func,
-  onSubQuantity: PropTypes.func,
+  available: PropTypes.bool,
+  label: PropTypes.string.isRequired,
+  onChangeQuantity: PropTypes.func,
 };
 
 export default ProductButton;

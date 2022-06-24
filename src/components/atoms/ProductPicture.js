@@ -26,6 +26,7 @@ const Styled = {
 };
 ProductPicture.propTypes = {
   altText: PropTypes.string.isRequired,
+  source: PropTypes.string.isRequired,
 };
 
 export default ProductPicture;

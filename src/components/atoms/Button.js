@@ -18,13 +18,13 @@ const Button = ({ onClickButton, children, primary, disabled }) => {
 
 const Styled = {
   Button: styled.button`
-    display: flex;
-    background-color: #fdf18d;
     border: 0;
-    height: 2.4rem;
     padding: 0 0.8rem;
     cursor: pointer;
     align-items: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    color: ${(props) => (props.primary ? "white" : theme.colors.primary)};
     background-color: ${(props) =>
       props.primary ? theme.colors.primary : theme.colors.secondary};
     &:focus,
@@ -40,11 +40,11 @@ const Styled = {
 };
 
 Button.defaultProps = {
-  buttonStyle: "",
+  primary: false,
 };
 
 Button.propTypes = {
-  buttonStyle: PropTypes.string,
+  primary: PropTypes.bool,
   onClickButton: PropTypes.func.isRequired,
   children: PropTypes.node.isRequired,
 };
