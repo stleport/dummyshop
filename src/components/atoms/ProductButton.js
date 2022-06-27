@@ -46,7 +46,7 @@ const Styled = {
 ProductButton.defaultProps = {
   primary: false,
   available: false,
-  onChangeQuantity: null,
+  onChangeQuantity: () => {},
 };
 
 ProductButton.propTypes = {

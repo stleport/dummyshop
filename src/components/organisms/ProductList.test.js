@@ -27,6 +27,9 @@ const products = Array(2)
 const server = setupServer(
   rest.get(`${apiUrl}/products`, (req, res, ctx) => {
     return res(ctx.json(products));
+  }),
+  rest.get(`${apiUrl}/carts/1`, (req, res, ctx) => {
+    return res(ctx.json([]));
   })
 );
 
