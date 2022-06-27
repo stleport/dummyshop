@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import styled from "styled-components/macro";
 import { theme } from "../../constants/colors";
 
-const Button = ({ onClickButton, children, primary, disabled }) => {
+const Button = ({ onClickButton, primary, disabled, children }) => {
   return (
     <Styled.Button
       type="button"
@@ -19,9 +19,9 @@ const Button = ({ onClickButton, children, primary, disabled }) => {
 const Styled = {
   Button: styled.button`
     border: 0;
-    padding: 0 0.8rem;
     cursor: pointer;
     align-items: center;
+    justify-content: center;
     width: 2.4rem;
     height: 2.4rem;
     color: ${(props) => (props.primary ? "white" : theme.colors.primary)};

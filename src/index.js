@@ -9,6 +9,7 @@ import Product from "./components/pages/Product";
 import reportWebVitals from "./reportWebVitals";
 import "./index.css";
 import ShopLayout from "./components/templates/ShopLayout";
+// import { ReactQueryDevtools } from "react-query/devtools";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 const queryClient = new QueryClient({
@@ -23,6 +24,7 @@ root.render(
   <Provider store={store}>
     <QueryClientProvider client={queryClient}>
       <Router>
+        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
         <ShopLayout>
           <Routes>
             <Route path="/" element={<App />} />

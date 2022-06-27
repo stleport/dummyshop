@@ -9,9 +9,9 @@ import { theme } from "../../constants/colors";
 const ProductList = () => {
   const client = useClient();
   const { data, status } = useQuery("productList", () => client("products"));
-  const productList =
-    data?.products.length > 0 &&
-    data?.products.map((item) => <ProductCard key={item.id} product={item} />);
+  const productList = data?.map((item) => (
+    <ProductCard key={item.id} product={item} />
+  ));
 
   if (status === "loading") {
     return (
@@ -23,10 +23,9 @@ const ProductList = () => {
 
   return (
     <React.Fragment>
-      <Styled.H1>Notre sélection</Styled.H1>
+      <Styled.H1>Highlight</Styled.H1>
       <Styled.Pagecount>
-        {data?.products.length > 0 &&
-          `${data?.products.length} produits trouvés`}
+        {data?.length > 0 && `${data?.length} items found`}
       </Styled.Pagecount>
       <Styled.CardList>{productList}</Styled.CardList>
     </React.Fragment>
@@ -66,6 +65,12 @@ const Styled = {
     width: 100%;
     height: 100vh;
   `,
+};
+
+ProductList.defaultProps = {
+  data: {
+    products: [],
+  },
 };
 
 export default ProductList;

@@ -3,15 +3,31 @@ import { Link } from "react-router-dom";
 import { ReactComponent as Github } from "../../assets/images/github.svg";
 import styled from "styled-components/macro";
 import NavLinks from "../molecules/NavLinks";
+import CartList from "../organisms/Cart";
 import { theme } from "../../constants/colors";
-import * as Cart from "../../store/cartSlice";
-import { useSelector } from "react-redux";
+import { Sidebar } from "primereact/sidebar";
+import { useQuery } from "react-query";
+import { useClient } from "../../utils/api-client";
 
 export const Header = () => {
-  const itemsCount = useSelector(Cart.selectItemsCount);
+  const [visible, setVisible] = React.useState(false);
+  const client = useClient();
+  const { data: cart } = useQuery("cart", () => client("carts/1"));
+  const itemsCount = cart?.products.reduce(
+    (acc, current) => acc + current.quantity,
+    0
+  );
 
   return (
     <Styled.Header>
+      <Sidebar
+        visible={visible}
+        position="right"
+        style={{ width: "23rem" }}
+        onHide={() => setVisible(false)}
+      >
+        <CartList cart={cart} />
+      </Sidebar>
       <Styled.Links>
         <Link to="/">
           <Styled.Logo>
@@ -21,7 +37,8 @@ export const Header = () => {
         <NavLinks />
       </Styled.Links>
       <Styled.Right>
-        <div>Votre panier : {itemsCount} articles</div>
+        <div>Your cart : {itemsCount} items</div>
+        <i className="pi pi-shopping-cart" onClick={(e) => setVisible(true)} />
         <a
           href="https://github.com/stleport/dummyshop"
           target="_blank"
@@ -53,8 +70,10 @@ const Styled = {
     display: flex;
     align-items: center;
     color: white;
-    & > div {
-      margin-right: 1rem;
+    i {
+      cursor: pointer;
+      font-size: 1.5rem;
+      margin: 0 1.1rem;
     }
   `,
   Logo: styled.div`
@@ -63,6 +82,10 @@ const Styled = {
     margin-left: 1rem;
   `,
   Header: styled.header`
+    box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    width: 100%;
     background-color: ${theme.colors.dark};
     padding: 0 1rem;
     display: flex;
@@ -75,7 +98,7 @@ const Styled = {
 
 Header.defaultProps = {
   cart: {
-    items: [],
+    products: [],
     total: 0,
   },
 };

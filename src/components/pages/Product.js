@@ -1,24 +1,25 @@
 import React from "react";
 import styled from "styled-components/macro";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
 import { useClient } from "../../utils/api-client";
-import * as Cart from "../../store/cartSlice";
 import { theme } from "../../constants/colors";
 import { Loader } from "../atoms/Spinner";
 import { useCart } from "../../utils/hooks";
-import ProductButton from "../atoms/ProductButton";
+import ProductButtons from "../molecules/ProductButtons";
 
 const Product = () => {
   const { id } = useParams();
   const client = useClient();
-  const { incrementCart, decrementCart } = useCart();
-  const items = useSelector(Cart.selectItems);
-  const item = items.find((item) => item.id === Number(id));
+  const queryClient = useQueryClient();
   const { data: product, status } = useQuery(["product", id], () =>
     client(`products/${id}`)
   );
+  const cart = queryClient.getQueryData(["cart"]);
+  const cartItem = cart?.products.find(
+    (cartItem) => cartItem.productId === Number(id)
+  );
+  const { incrementCart, decrementCart, pending } = useCart();
 
   return (
     <>
@@ -28,39 +29,31 @@ const Product = () => {
         </Styled.FullSpaceContainer>
       ) : (
         <Styled.Product>
-          <h1>{product?.title}</h1>
-          <Styled.CartQuantity style={{ display: "flex" }}>
-            <ProductButton
-              label="-"
-              available={product.quantity > 0}
-              onChangeQuantity={decrementCart(product.id)}
-            />
-
-            <span
-              aria-label="count"
-              style={{
-                margin: "0 .5rem",
-                fontSize: "1.6rem",
-                minWidth: "2rem",
-                textAlign: "center",
-              }}
-            >
-              {item?.quantity ?? "0"}
-            </span>
-            <ProductButton
-              primary
-              label="+"
-              available={product.quantity > 0}
-              onChangeQuantity={incrementCart(product.id)}
-            />
+          <Styled.CartQuantity>
+            <h1>
+              {`${product?.title} 
+            ${cartItem?.quantity > 0 ? `(x${cartItem?.quantity})` : ""}`}
+            </h1>
           </Styled.CartQuantity>
           <Styled.ProductDescription>
             <img
-              src={product.images && product.images[0]}
+              src={product?.image}
               alt={product?.title}
               title={product?.title}
             />
-            <p>{product?.description}</p>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <p>{product?.description}</p>
+              <p style={{ fontWeight: "bold", fontSize: "1.4rem" }}>
+                {product?.price.toFixed(2)} €
+              </p>
+              <ProductButtons
+                productId={product?.id}
+                quantity={cartItem?.quantity ?? 0}
+                incrementCart={incrementCart}
+                decrementCart={decrementCart}
+                pending={pending}
+              />
+            </div>
           </Styled.ProductDescription>
         </Styled.Product>
       )}
@@ -92,6 +85,8 @@ export const Styled = {
     }
   `,
   Product: styled.div`
+    background-color: white;
+    padding: 1.8rem;
     img {
       width: 100%;
       align-self: center;

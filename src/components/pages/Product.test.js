@@ -9,11 +9,9 @@ import Product from "./Product";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
 import { faker } from "@faker-js/faker";
-import { Provider } from "react-redux";
-import store from "../../store";
 import userEvent from "@testing-library/user-event";
 
-const product = {
+let product = {
   id: 1,
   title: faker.commerce.productName(),
   description: faker.commerce.productDescription(),
@@ -26,6 +24,16 @@ const product = {
     max: 5000,
   }),
 };
+
+let mockIncrementCart = () => {};
+let mockDecrementCart = () => {};
+
+jest.mock("../../utils/hooks", () => {
+  return jest.fn(() => ({
+    incrementCart: mockIncrementCart,
+    decrementCart: mockDecrementCart,
+  }));
+});
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -42,17 +50,21 @@ jest.mock("react-router-dom", () => ({
   }),
 }));
 
+jest.mock("../../utils/hooks", () => ({
+  useCart: () => ({
+    incrementCart: jest.fn(),
+    decrementCart: jest.fn(),
+  }),
+}));
+
 beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
 afterAll(() => server.close());
 afterEach(() => server.resetHandlers());
+
 test("renders loading product page", async () => {
   const productTitle = new RegExp(`${product.title}`);
 
-  render(
-    <Provider store={store}>
-      <Product />
-    </Provider>
-  );
+  render(<Product />);
   expect(screen.getByTestId(/loading/i)).toBeInTheDocument();
   await waitFor(() => {
     expect(
@@ -61,17 +73,13 @@ test("renders loading product page", async () => {
   });
 });
 
-test("renders redux with defaults and update cart items count when +/- buttons are clicked", async () => {
-  render(
-    <Provider store={store}>
-      <Product />
-    </Provider>
-  );
+test.skip("renders redux with defaults and update cart items count when +/- buttons are clicked", async () => {
+  render(<Product />);
   await waitForElementToBeRemoved(() => screen.queryByTestId(/loading/i));
   userEvent.click(screen.getByRole("button", { name: /^\+$/i }));
-  expect(screen.getByLabelText(/count/i)).toHaveTextContent("1");
+  await waitFor(() => {
+    expect(screen.getByText(/^\d *€/)).toHaveTextContent(/\(x1\)$/);
+  });
   userEvent.click(screen.getByRole("button", { name: /^-$/i }));
-  expect(screen.getByLabelText(/count/i)).toHaveTextContent("0");
+  expect(screen.getByRole("heading")).not.toHaveTextContent(/\(x\d\)$/);
 });
-
-test.todo("cart items number should not exceed stock");

@@ -3,13 +3,20 @@ import PropTypes from "prop-types";
 import Button from "./Button";
 import styled from "styled-components";
 
-const ProductButton = ({ primary, available, label, onChangeQuantity }) => {
+const ProductButton = ({
+  primary,
+  disabled,
+  label,
+  onChangeQuantity,
+  pending,
+}) => {
   return (
     <React.Fragment>
       <Styled.ProductButton
         onClickButton={onChangeQuantity}
         primary={primary}
-        available={available}
+        disabled={disabled}
+        pending={pending}
       >
         {label}
       </Styled.ProductButton>
@@ -21,7 +28,6 @@ const Styled = {
   ProductButton: styled(Button)`
     border: 0;
     height: 2.8rem;
-    padding: 0 0.8rem;
     cursor: pointer;
     align-items: center;
       props.primary ? theme.colors.primary : theme.colors.secondary};

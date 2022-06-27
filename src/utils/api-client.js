@@ -1,8 +1,7 @@
 import * as React from "react";
 import { QueryClient } from "react-query";
 
-const apiUrl = "https://dummyjson.com";
-// const apiURL = process.env.API_URL;
+const apiUrl = process.env.REACT_APP_API_URL;
 
 export function useClient() {
   return React.useCallback(

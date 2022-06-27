@@ -80,6 +80,6 @@ Permet de gérer :
 
 - tests e2e
 - pas mal de possibilités avec `dummyjson`... si j'avais un peu plus de temps, je me serais sans doute lancé sur la recherche de produit, l'authentification/inscription, une gestion avancée du panier
-- tests à compléter, notamment `index`, `Home` et `App`. Les tests en attente sont déclarés en `todo`.
+- tests à compléter, notamment `index`, `Home` et `App`.
 - si c'était un POC, je me serais peut-être lancé sur une persistence des données via un service worker (msw) ou localstorage
 - score lighthouse accessibilité et performances, surtout sur mobile

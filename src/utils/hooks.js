@@ -1,6 +1,14 @@
 import * as React from "react";
-import { useDispatch } from "react-redux";
-import * as Cart from "../store/cartSlice";
+import { useMutation, useQueryClient } from "react-query";
+
+function addOrReplaceItem(array, value) {
+  return Array.from(
+    new Map([
+      ...array.map((item) => [item.productId, item]),
+      [value.productId, value],
+    ]).values()
+  );
+}
 
 function useSafeDispatch(dispatch) {
   const mounted = React.useRef(false);
@@ -79,18 +87,56 @@ function useAsync(initialState) {
   };
 }
 
+async function updateCart(newCartItem) {
+  return fetch(`https://fakestoreapi.com/carts/1`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(newCartItem),
+  }).then(async (res) => await res.json());
+}
+
 function useCart() {
-  const dispatch = useDispatch();
-  const incrementCart = (id) => (e) => {
-    e.stopPropagation();
-    dispatch(Cart.incrementCart(id));
-  };
-  const decrementCart = (id) => (e) => {
-    e.stopPropagation();
-    dispatch(Cart.decrementCart(id));
+  const queryClient = useQueryClient();
+  const data = queryClient.getQueryData(["cart"]);
+  const cartItems = data?.products.map(({ productId, quantity }) => ({
+    productId,
+    quantity,
+  }));
+  const {
+    mutate,
+    isLoading: pending,
+    status,
+  } = useMutation((newCartItem) => updateCart(newCartItem), {
+    onSuccess: (data) => {
+      queryClient.setQueryData(["cart"], data);
+    },
+  });
+
+  const incrementCart = ({ productId, quantity }) => {
+    return (e) => {
+      e.stopPropagation();
+      mutate({
+        products: addOrReplaceItem(cartItems, {
+          productId,
+          quantity: quantity + 1,
+        }),
+      });
+    };
   };
 
-  return { incrementCart, decrementCart };
+  const decrementCart =
+    ({ productId, quantity }) =>
+    (e) => {
+      e.stopPropagation();
+      mutate({
+        products: addOrReplaceItem(cartItems, {
+          productId,
+          quantity: quantity === 0 ? quantity : quantity - 1,
+        }),
+      });
+    };
+
+  return { incrementCart, decrementCart, pending, status };
 }
 
 export { useAsync, useCart };
