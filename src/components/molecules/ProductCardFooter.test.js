@@ -11,7 +11,7 @@ test("renders card footer with price and 'add to cart' button", async () => {
     incrementCart: jest.fn(),
     decrementCart: jest.fn(),
   };
-  const price = new RegExp(`${product.price}€`);
+  const price = new RegExp(`${product.price}\\.\\d\\d€`);
 
   render(<ProductCardFooter {...product} />);
   expect(screen.getByText(price)).toBeInTheDocument();

@@ -42,7 +42,7 @@ test("renders ProductCard", async () => {
     screen.getByText(new RegExp(`${data.product.description}`))
   ).toBeInTheDocument();
   expect(
-    screen.getByText(new RegExp(`${data.product.price}€`))
+    screen.getByText(new RegExp(`${data.product.price}\\.\\d\\d€`))
   ).toBeInTheDocument();
 
   userEvent.click(screen.getByRole("article"));
