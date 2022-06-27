@@ -14,7 +14,7 @@ const ProductCardFooter = ({
   return (
     <Styled.ProductFooter>
       <div>
-        {`${price}€ ${
+        {`${price.toFixed(2)}€ ${
           cartItem?.quantity > 0 ? `(x${cartItem?.quantity})` : ""
         }`}
       </div>
