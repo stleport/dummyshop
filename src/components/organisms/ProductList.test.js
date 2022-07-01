@@ -14,10 +14,6 @@ const products = Array(2)
     id: faker.datatype.number(),
     title: faker.commerce.productName(),
     description: faker.commerce.productDescription(),
-    stock: faker.datatype.number({
-      min: 0,
-      max: 500,
-    }),
     price: faker.datatype.number({
       min: 1,
       max: 5000,

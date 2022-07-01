@@ -7,17 +7,13 @@ import ProductDescription from "./ProductCardDescription";
 import { theme } from "../../constants/colors";
 import ProductCardFooter from "./ProductCardFooter";
 import { useCart } from "../../utils/hooks";
-import { useClient } from "../../utils/api-client";
-import { useQuery } from "react-query";
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
-  const client = useClient();
-  const { data: cartData } = useQuery("cart", () => client("carts/1"));
-  const cartItem = cartData?.products.find(
+  const { incrementCart, decrementCart, cartItems, pending } = useCart();
+  const cartItem = cartItems?.find(
     (cartItem) => product.id === cartItem.productId
   );
-  const { incrementCart, decrementCart, pending } = useCart();
 
   return (
     <Styled.ProductCard
@@ -41,7 +37,7 @@ const ProductCard = ({ product }) => {
         incrementCart={incrementCart}
         decrementCart={decrementCart}
         pending={pending}
-        cartData={cartData}
+        cartData={{ products: cartItems }}
       />
     </Styled.ProductCard>
   );
@@ -73,7 +69,7 @@ ProductCard.propTypes = {
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     category: PropTypes.string.isRequired,
-    images: PropTypes.arrayOf(PropTypes.string),
+    image: PropTypes.string,
     price: PropTypes.number,
   }).isRequired,
 };

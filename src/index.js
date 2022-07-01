@@ -27,7 +27,10 @@ root.render(
         {/* <ReactQueryDevtools initialIsOpen={false} /> */}
         <ShopLayout>
           <Routes>
-            <Route path="/" element={<App />} />
+            <Route
+              path="/"
+              element={<App myProp={(prop) => ({ ...prop })} />}
+            />
             <Route path="products/:id" element={<Product />} />
           </Routes>
         </ShopLayout>

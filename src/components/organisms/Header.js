@@ -37,7 +37,7 @@ export const Header = () => {
         <NavLinks />
       </Styled.Links>
       <Styled.Right>
-        <div>Your cart : {itemsCount} items</div>
+        {itemsCount > 0 ? <div>Your cart : {itemsCount} items</div> : null}
         <i className="pi pi-shopping-cart" onClick={(e) => setVisible(true)} />
         <a
           href="https://github.com/stleport/dummyshop"

@@ -1,14 +1,12 @@
 import styled from "styled-components";
-import ProductButtons from "../molecules/ProductButtons";
+import ProductButtons from "../molecules/CartButtons";
 import { useCart } from "../../utils/hooks";
 import React from "react";
 import { useQuery } from "react-query";
 import { useClient } from "../../utils/api-client";
 import { Loader } from "../atoms/Spinner";
 
-const CartItem = ({ item }) => {
-  const { incrementCart, decrementCart, pending } = useCart();
-  console.log(item);
+const CartItem = ({ item, incrementCart, decrementCart }) => {
   return (
     <Styled.CartItemContainer>
       <li key={item.productId}>
@@ -17,35 +15,36 @@ const CartItem = ({ item }) => {
           quantity={item.quantity}
           incrementCart={incrementCart}
           decrementCart={decrementCart}
-          pending={pending}
         />
         <Styled.Img src={item?.image} />
-        <Styled.Label>
+        <Styled.Label data-testid="product-label">
           {item.title} <strong>(x{item?.quantity}</strong>)
         </Styled.Label>
-        <Styled.Price>{item.price}€</Styled.Price>
+        <Styled.Price>{item.price.toFixed(2)}€</Styled.Price>
       </li>
     </Styled.CartItemContainer>
   );
 };
 
-const Cart = ({ cart }) => {
+const Cart = () => {
   const client = useClient();
   const { data: products, status } = useQuery("productList", () =>
     client("products")
   );
-  const cartItems = cart?.products
-    .map((cartItem) => ({
+  const { incrementCart, decrementCart, cartItems: cart } = useCart();
+  const cartItems = cart
+    ?.map((cartItem) => ({
       ...cartItem,
       ...products?.find((productItem) => productItem.id === cartItem.productId),
     }))
     .filter((item) => Boolean(item.quantity));
-  const cartItemsCount = cartItems.reduce(
+
+  const cartItemsCount = cartItems?.reduce(
     (acc, current) => acc + current.quantity,
     0
   );
 
-  const totalPrice = cartItems.reduce(
+  const totalPrice = cartItems?.reduce(
     (acc, current) => acc + current.price * current.quantity,
     0
   );
@@ -53,7 +52,7 @@ const Cart = ({ cart }) => {
   if (status === "loading")
     return (
       <Styled.FullSpaceContainer>
-        <Loader data-testid="loading" />
+        <Loader data-testid="cart-loading" />
       </Styled.FullSpaceContainer>
     );
   return (
@@ -72,7 +71,11 @@ const Cart = ({ cart }) => {
         <Styled.CartItemsList>
           {cartItems.map((item) => (
             <React.Fragment key={item.productId}>
-              <CartItem item={item} />
+              <CartItem
+                item={item}
+                incrementCart={incrementCart}
+                decrementCart={decrementCart}
+              />
               <Styled.Hr />
             </React.Fragment>
           ))}

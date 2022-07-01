@@ -10,7 +10,6 @@ test("renders navigation with one or more link", async () => {
     title: "My product",
     description: "lorem",
     price: 98,
-    stock: 24,
   };
   render(<ProductDescription {...product} />);
   expect(

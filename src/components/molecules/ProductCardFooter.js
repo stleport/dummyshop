@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components/macro";
-import ProductButtons from "../molecules/ProductButtons";
+import CartButtons from "./CartButtons";
 
 const ProductCardFooter = ({
   price,
@@ -18,7 +18,7 @@ const ProductCardFooter = ({
           cartItem?.quantity > 0 ? `(x${cartItem?.quantity})` : ""
         }`}
       </div>
-      <ProductButtons
+      <CartButtons
         productId={productId}
         quantity={cartItem?.quantity}
         incrementCart={incrementCart}

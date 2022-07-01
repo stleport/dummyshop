@@ -1,5 +1,6 @@
 import * as React from "react";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient, useQuery } from "react-query";
+import { useClient } from "./api-client";
 
 function addOrReplaceItem(array, value) {
   return Array.from(
@@ -96,17 +97,25 @@ async function updateCart(newCartItem) {
 }
 
 function useCart() {
+  const client = useClient();
+  const { data: cart } = useQuery(["cart"], () => client("carts/1"));
   const queryClient = useQueryClient();
-  const data = queryClient.getQueryData(["cart"]);
-  const cartItems = data?.products.map(({ productId, quantity }) => ({
+  const cartItems = cart?.products.map(({ productId, quantity }) => ({
     productId,
     quantity,
   }));
+
   const {
     mutate,
     isLoading: pending,
     status,
   } = useMutation((newCartItem) => updateCart(newCartItem), {
+    onMutate: async (newCartItem) => {
+      const previousCart = queryClient.getQueryData("cart");
+      queryClient.setQueryData("cart", newCartItem);
+
+      return { previousCart };
+    },
     onSuccess: (data) => {
       queryClient.setQueryData(["cart"], data);
     },
@@ -136,7 +145,13 @@ function useCart() {
       });
     };
 
-  return { incrementCart, decrementCart, pending, status };
+  return {
+    incrementCart,
+    decrementCart,
+    cartItems: cart?.products,
+    pending,
+    status,
+  };
 }
 
 export { useAsync, useCart };

@@ -1,25 +1,24 @@
 import React from "react";
 import styled from "styled-components/macro";
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import { useClient } from "../../utils/api-client";
 import { theme } from "../../constants/colors";
 import { Loader } from "../atoms/Spinner";
 import { useCart } from "../../utils/hooks";
-import ProductButtons from "../molecules/ProductButtons";
+import ProductButtons from "../molecules/CartButtons";
 
 const Product = () => {
   const { id } = useParams();
   const client = useClient();
-  const queryClient = useQueryClient();
   const { data: product, status } = useQuery(["product", id], () =>
     client(`products/${id}`)
   );
-  const cart = queryClient.getQueryData(["cart"]);
-  const cartItem = cart?.products.find(
+  const { incrementCart, decrementCart, cartItems } = useCart();
+
+  const cartItem = cartItems?.find(
     (cartItem) => cartItem.productId === Number(id)
   );
-  const { incrementCart, decrementCart, pending } = useCart();
 
   return (
     <>
@@ -51,7 +50,6 @@ const Product = () => {
                 quantity={cartItem?.quantity ?? 0}
                 incrementCart={incrementCart}
                 decrementCart={decrementCart}
-                pending={pending}
               />
             </div>
           </Styled.ProductDescription>

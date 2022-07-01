@@ -1,47 +1,43 @@
 import React from "react";
+import { render } from "../../test/helpers";
+import userEvent from "@testing-library/user-event";
 import {
   screen,
   waitFor,
   waitForElementToBeRemoved,
+  renderHook,
 } from "@testing-library/react";
-import { render } from "../../test/helpers";
-import Product from "./Product";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
 import { faker } from "@faker-js/faker";
-import userEvent from "@testing-library/user-event";
+import { useCart } from "../../utils/hooks";
+import { QueryClient, QueryClientProvider } from "react-query";
+import Product from "./Product";
+
+const apiUrl = process.env.REACT_APP_API_URL;
 
 let product = {
   id: 1,
   title: faker.commerce.productName(),
   description: faker.commerce.productDescription(),
-  stock: faker.datatype.number({
-    min: 0,
-    max: 500,
-  }),
   price: faker.datatype.number({
     min: 1,
     max: 5000,
   }),
 };
 
-let mockIncrementCart = () => {};
-let mockDecrementCart = () => {};
-
-jest.mock("../../utils/hooks", () => {
-  return jest.fn(() => ({
-    incrementCart: mockIncrementCart,
-    decrementCart: mockDecrementCart,
-  }));
-});
-
-const apiUrl = process.env.REACT_APP_API_URL;
-
 const server = setupServer(
   rest.get(`${apiUrl}/products/${product.id}`, (req, res, ctx) => {
     return res(ctx.json({ ...product }));
+  }),
+  rest.get(`${apiUrl}/carts/1`, (req, res, ctx) => {
+    return res(ctx.json({ products: [{ productId: 1, quantity: 1 }] }));
   })
 );
+
+beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+afterAll(() => server.close());
+afterEach(() => server.resetHandlers());
 
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
@@ -49,17 +45,6 @@ jest.mock("react-router-dom", () => ({
     id: 1,
   }),
 }));
-
-jest.mock("../../utils/hooks", () => ({
-  useCart: () => ({
-    incrementCart: jest.fn(),
-    decrementCart: jest.fn(),
-  }),
-}));
-
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
-afterAll(() => server.close());
-afterEach(() => server.resetHandlers());
 
 test("renders loading product page", async () => {
   const productTitle = new RegExp(`${product.title}`);
@@ -73,13 +58,74 @@ test("renders loading product page", async () => {
   });
 });
 
-test.skip("renders redux with defaults and update cart items count when +/- buttons are clicked", async () => {
+test("increment cart when [+] button is clicked", async () => {
+  server.use(
+    rest.get(`${apiUrl}/carts/1`, (req, res, ctx) => {
+      return res(ctx.json({ products: [{ productId: 1, quantity: 1 }] }));
+    }),
+    rest.put(`${apiUrl}/carts/1`, (req, res, ctx) => {
+      return res(ctx.json({ products: [{ productId: 1, quantity: 2 }] }));
+    })
+  );
+
+  const queryClient = new QueryClient();
+  const wrapper = ({ children }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+
   render(<Product />);
+
   await waitForElementToBeRemoved(() => screen.queryByTestId(/loading/i));
-  userEvent.click(screen.getByRole("button", { name: /^\+$/i }));
-  await waitFor(() => {
-    expect(screen.getByText(/^\d *€/)).toHaveTextContent(/\(x1\)$/);
+
+  const { result } = renderHook(() => useCart(), {
+    wrapper,
   });
-  userEvent.click(screen.getByRole("button", { name: /^-$/i }));
-  expect(screen.getByRole("heading")).not.toHaveTextContent(/\(x\d\)$/);
+
+  await waitFor(() => {
+    return result.current.isSuccess;
+  });
+
+  userEvent.click(screen.getByRole("button", { name: "+" }));
+
+  await waitFor(() =>
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+      /\(x2\)$/
+    )
+  );
+});
+
+test("decrement cart when [-] button is clicked", async () => {
+  server.use(
+    rest.get(`${apiUrl}/carts/1`, (req, res, ctx) => {
+      return res(ctx.json({ products: [{ productId: 1, quantity: 5 }] }));
+    }),
+    rest.put(`${apiUrl}/carts/1`, (req, res, ctx) => {
+      return res(ctx.json({ products: [{ productId: 1, quantity: 4 }] }));
+    })
+  );
+
+  const queryClient = new QueryClient();
+  const wrapper = ({ children }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+
+  render(<Product />);
+
+  await waitForElementToBeRemoved(() => screen.queryByTestId(/loading/i));
+
+  const { result } = renderHook(() => useCart(), {
+    wrapper,
+  });
+
+  await waitFor(() => {
+    return result.current.isSuccess;
+  });
+
+  userEvent.click(screen.getByRole("button", { name: "-" }));
+
+  await waitFor(() =>
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+      /\(x4\)$/
+    )
+  );
 });
