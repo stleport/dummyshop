@@ -1,6 +1,6 @@
 ## Demo
 
-https://dull-wish.surge.sh/
+https://thankful-sweater.surge.sh/
 
 ## Scripts
 
