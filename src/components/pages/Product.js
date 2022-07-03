@@ -2,79 +2,36 @@ import React from "react";
 import styled from "styled-components/macro";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
 import { useClient } from "../../utils/api-client";
-import * as Cart from "../../store/cartSlice";
 import { theme } from "../../constants/colors";
-import { Loader } from "../atoms/Spinner";
-import { useCart } from "../../utils/hooks";
-import ProductButton from "../atoms/ProductButton";
+import { SpinnerBlock } from "../atoms/Spinner";
+import Product from "../organisms/Product";
 
-const Product = () => {
+const ProductPage = () => {
   const { id } = useParams();
   const client = useClient();
-  const { incrementCart, decrementCart } = useCart();
-  const items = useSelector(Cart.selectItems);
-  const item = items.find((item) => item.id === Number(id));
-  const { data: product, status } = useQuery(["product", id], () =>
-    client(`products/${id}`)
-  );
+  const {
+    data: product,
+    status,
+    isError,
+  } = useQuery(["product", id], () => client(`products/${id}`));
 
   return (
     <>
-      {status === "loading" ? (
-        <Styled.FullSpaceContainer>
-          <Loader data-testid="loading" />
-        </Styled.FullSpaceContainer>
+      {isError ? (
+        <div role="alert">
+          Oops... An error occurred, please try again later.
+        </div>
+      ) : status === "loading" ? (
+        <SpinnerBlock data-testid="loading" />
       ) : (
-        <Styled.Product>
-          <h1>{product?.title}</h1>
-          <Styled.CartQuantity style={{ display: "flex" }}>
-            <ProductButton
-              label="-"
-              available={product.quantity > 0}
-              onChangeQuantity={decrementCart(product.id)}
-            />
-
-            <span
-              aria-label="count"
-              style={{
-                margin: "0 .5rem",
-                fontSize: "1.6rem",
-                minWidth: "2rem",
-                textAlign: "center",
-              }}
-            >
-              {item?.quantity ?? "0"}
-            </span>
-            <ProductButton
-              primary
-              label="+"
-              available={product.quantity > 0}
-              onChangeQuantity={incrementCart(product.id)}
-            />
-          </Styled.CartQuantity>
-          <Styled.ProductDescription>
-            <img
-              src={product.images && product.images[0]}
-              alt={product?.title}
-              title={product?.title}
-            />
-            <p>{product?.description}</p>
-          </Styled.ProductDescription>
-        </Styled.Product>
+        <Product product={product} />
       )}
     </>
   );
 };
 
 export const Styled = {
-  FullSpaceContainer: styled.div`
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: 100vh;
-  `,
   CartQuantity: styled.div`
     margin-bottom: 1.4rem;
   `,
@@ -92,6 +49,8 @@ export const Styled = {
     }
   `,
   Product: styled.div`
+    background-color: white;
+    padding: 1.8rem;
     img {
       width: 100%;
       align-self: center;
@@ -102,4 +61,4 @@ export const Styled = {
   `,
 };
 
-export default Product;
+export default ProductPage;

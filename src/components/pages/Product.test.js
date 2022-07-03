@@ -1,33 +1,40 @@
 import React from "react";
+import { render } from "../../test/helpers";
 import {
   screen,
   waitFor,
   waitForElementToBeRemoved,
 } from "@testing-library/react";
-import { render } from "../../test/helpers";
-import Product from "./Product";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
 import { faker } from "@faker-js/faker";
-import { Provider } from "react-redux";
-import store from "../../store";
-import userEvent from "@testing-library/user-event";
+import { QueryClient, QueryClientProvider } from "react-query";
+import ProductPage from "./Product";
 
-const product = {
+const apiUrl = process.env.REACT_APP_API_URL;
+
+let product = {
   id: 1,
   title: faker.commerce.productName(),
   description: faker.commerce.productDescription(),
-  stock: faker.datatype.number({
-    min: 0,
-    max: 500,
-  }),
   price: faker.datatype.number({
     min: 1,
     max: 5000,
   }),
 };
 
-const apiUrl = process.env.REACT_APP_API_URL;
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retryDelay: 1,
+      retry: 0,
+    },
+  },
+});
+
+const Wrapper = ({ children }) => (
+  <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+);
 
 const server = setupServer(
   rest.get(`${apiUrl}/products/${product.id}`, (req, res, ctx) => {
@@ -35,6 +42,11 @@ const server = setupServer(
   })
 );
 
+beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
+afterAll(() => server.close());
+afterEach(() => server.resetHandlers());
+
+jest.mock("../organisms/Product", () => () => <h1>Product details</h1>);
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
   useParams: () => ({
@@ -42,36 +54,35 @@ jest.mock("react-router-dom", () => ({
   }),
 }));
 
-beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
-afterAll(() => server.close());
-afterEach(() => server.resetHandlers());
 test("renders loading product page", async () => {
-  const productTitle = new RegExp(`${product.title}`);
-
-  render(
-    <Provider store={store}>
-      <Product />
-    </Provider>
-  );
+  render(<ProductPage />);
   expect(screen.getByTestId(/loading/i)).toBeInTheDocument();
   await waitFor(() => {
     expect(
-      screen.getByRole("heading", { name: productTitle })
+      screen.getByRole("heading", { name: /product details/i })
     ).toBeInTheDocument();
   });
 });
 
-test("renders redux with defaults and update cart items count when +/- buttons are clicked", async () => {
-  render(
-    <Provider store={store}>
-      <Product />
-    </Provider>
+test("unknown server error displays the error message", async () => {
+  server.use(
+    rest.get(`${apiUrl}/products/1`, (req, res, ctx) => {
+      return res(ctx.status(500), ctx.json({ message: "someting went wrong" }));
+    })
   );
-  await waitForElementToBeRemoved(() => screen.queryByTestId(/loading/i));
-  userEvent.click(screen.getByRole("button", { name: /^\+$/i }));
-  expect(screen.getByLabelText(/count/i)).toHaveTextContent("1");
-  userEvent.click(screen.getByRole("button", { name: /^-$/i }));
-  expect(screen.getByLabelText(/count/i)).toHaveTextContent("0");
-});
+  const originalError = console.error;
+  console.error = jest.fn();
 
-test.todo("cart items number should not exceed stock");
+  render(
+    <Wrapper>
+      <ProductPage />
+    </Wrapper>
+  );
+
+  await waitForElementToBeRemoved(await screen.findByTestId("loading"));
+
+  await waitFor(() => {
+    expect(screen.getByRole("alert")).toBeInTheDocument();
+  });
+  console.error = originalError;
+});

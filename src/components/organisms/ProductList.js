@@ -3,30 +3,26 @@ import styled from "styled-components/macro";
 import { useQuery } from "react-query";
 import { useClient } from "../../utils/api-client";
 import ProductCard from "../molecules/ProductCard";
-import { Loader } from "../atoms/Spinner";
+import { SpinnerBlock } from "../atoms/Spinner";
 import { theme } from "../../constants/colors";
 
 const ProductList = () => {
   const client = useClient();
-  const { data, status } = useQuery("productList", () => client("products"));
-  const productList =
-    data?.products.length > 0 &&
-    data?.products.map((item) => <ProductCard key={item.id} product={item} />);
+  const { data, status } = useQuery(
+    "productList",
+    async () => await client("products")
+  );
+  const productList = data?.map((item) => (
+    <ProductCard key={item.id} product={item} />
+  ));
 
-  if (status === "loading") {
-    return (
-      <Styled.FullSpaceContainer>
-        <Loader data-testid="loading" />
-      </Styled.FullSpaceContainer>
-    );
-  }
+  if (status === "loading") return <SpinnerBlock data-testid="loading" />;
 
   return (
     <React.Fragment>
-      <Styled.H1>Notre sélection</Styled.H1>
+      <Styled.H1>Highlight</Styled.H1>
       <Styled.Pagecount>
-        {data?.products.length > 0 &&
-          `${data?.products.length} produits trouvés`}
+        {data?.length > 0 && `${data?.length} items found`}
       </Styled.Pagecount>
       <Styled.CardList>{productList}</Styled.CardList>
     </React.Fragment>
@@ -59,13 +55,12 @@ const Styled = {
       grid-template-columns: repeat(5, 1fr);
     }
   `,
-  FullSpaceContainer: styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100vh;
-  `,
+};
+
+ProductList.defaultProps = {
+  data: {
+    products: [],
+  },
 };
 
 export default ProductList;

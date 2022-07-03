@@ -4,6 +4,9 @@ import Header from "../organisms/Header";
 import Footer from "../organisms/Footer";
 import styled from "styled-components/macro";
 import { theme } from "../../constants/colors";
+import "primereact/resources/themes/lara-light-indigo/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
 
 const ShopLayout = ({ children }) => (
   <React.Fragment>
@@ -19,10 +22,10 @@ const Styled = {
   PageWrapper: styled.div`
     min-height: 100vh;
     width: auto !important;
-    margin-top: 3rem;
-    margin: 3rem 1rem;
+    margin-top: 6.5rem;
+    margin: 6rem 1rem;
     @media only screen and (min-width: ${theme.device.tablet}) {
-      margin: 3rem auto;
+      margin: 6.5rem auto;
       max-width: 723px;
     }
 

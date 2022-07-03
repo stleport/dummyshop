@@ -6,7 +6,7 @@ const ProductPicture = ({ altText, source }) => {
   return (
     <React.Fragment>
       <Styled.ProductPicture>
-        <Styled.Img title={altText} src={source} data-testid="background" />
+        <Styled.Img title={altText} src={source} />
       </Styled.ProductPicture>
     </React.Fragment>
   );

@@ -9,6 +9,7 @@ import Product from "./components/pages/Product";
 import reportWebVitals from "./reportWebVitals";
 import "./index.css";
 import ShopLayout from "./components/templates/ShopLayout";
+// import { ReactQueryDevtools } from "react-query/devtools";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 const queryClient = new QueryClient({
@@ -23,6 +24,7 @@ root.render(
   <Provider store={store}>
     <QueryClientProvider client={queryClient}>
       <Router>
+        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
         <ShopLayout>
           <Routes>
             <Route path="/" element={<App />} />
@@ -37,4 +39,4 @@ root.render(
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+reportWebVitals(console.log);

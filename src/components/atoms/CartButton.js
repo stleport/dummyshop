@@ -3,25 +3,22 @@ import PropTypes from "prop-types";
 import Button from "./Button";
 import styled from "styled-components";
 
-const ProductButton = ({ primary, available, label, onChangeQuantity }) => {
+const CartButton = ({ primary, disabled, label, onChangeQuantity }) => {
   return (
-    <React.Fragment>
-      <Styled.ProductButton
-        onClickButton={onChangeQuantity}
-        primary={primary}
-        available={available}
-      >
-        {label}
-      </Styled.ProductButton>
-    </React.Fragment>
+    <Styled.CartButton
+      onClickButton={onChangeQuantity}
+      primary={primary}
+      disabled={disabled}
+    >
+      {label}
+    </Styled.CartButton>
   );
 };
 
 const Styled = {
-  ProductButton: styled(Button)`
+  CartButton: styled(Button)`
     border: 0;
     height: 2.8rem;
-    padding: 0 0.8rem;
     cursor: pointer;
     align-items: center;
       props.primary ? theme.colors.primary : theme.colors.secondary};
@@ -37,17 +34,15 @@ const Styled = {
   }`,
 };
 
-ProductButton.defaultProps = {
+CartButton.defaultProps = {
   primary: false,
-  available: false,
-  onChangeQuantity: null,
+  onChangeQuantity: () => {},
 };
 
-ProductButton.propTypes = {
-  primary: PropTypes.bool,
-  available: PropTypes.bool,
+CartButton.propTypes = {
   label: PropTypes.string.isRequired,
+  primary: PropTypes.bool,
   onChangeQuantity: PropTypes.func,
 };
 
-export default ProductButton;
+export default CartButton;
