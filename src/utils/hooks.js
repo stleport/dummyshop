@@ -2,6 +2,8 @@ import * as React from "react";
 import { useMutation, useQueryClient, useQuery } from "react-query";
 import { useClient } from "./api-client";
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 function addOrReplaceItem(array, value) {
   return Array.from(
     new Map([
@@ -89,7 +91,7 @@ function useAsync(initialState) {
 }
 
 async function updateCart(newCartItem) {
-  return fetch(`https://fakestoreapi.com/carts/1`, {
+  return fetch(`${apiUrl}/carts/1`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(newCartItem),

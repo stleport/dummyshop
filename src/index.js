@@ -1,8 +1,6 @@
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { Provider } from "react-redux";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import store from "./store";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import Product from "./components/pages/Product";
@@ -21,19 +19,17 @@ const queryClient = new QueryClient({
 });
 
 root.render(
-  <Provider store={store}>
-    <QueryClientProvider client={queryClient}>
-      <Router>
-        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
-        <ShopLayout>
-          <Routes>
-            <Route path="/" element={<App />} />
-            <Route path="products/:id" element={<Product />} />
-          </Routes>
-        </ShopLayout>
-      </Router>
-    </QueryClientProvider>
-  </Provider>
+  <QueryClientProvider client={queryClient}>
+    <Router>
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+      <ShopLayout>
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="products/:id" element={<Product />} />
+        </Routes>
+      </ShopLayout>
+    </Router>
+  </QueryClientProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

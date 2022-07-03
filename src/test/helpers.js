@@ -2,8 +2,6 @@ import { BrowserRouter as Router } from "react-router-dom";
 import { createMemoryHistory } from "history";
 import { render as rtlRender } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { Provider } from "react-redux";
-import store from "../store";
 
 function render(
   ui,
@@ -17,11 +15,9 @@ function render(
     const queryClient = new QueryClient();
 
     return (
-      <Provider store={store}>
-        <QueryClientProvider client={queryClient}>
-          <Router history={history}>{children}</Router>
-        </QueryClientProvider>
-      </Provider>
+      <QueryClientProvider client={queryClient}>
+        <Router history={history}>{children}</Router>
+      </QueryClientProvider>
     );
   }
 

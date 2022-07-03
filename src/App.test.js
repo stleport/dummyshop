@@ -1,17 +1,9 @@
 import React from "react";
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import { createMemoryHistory } from "history";
+import "@testing-library/jest-dom";
 import App from "./App";
 
-jest.mock("./components/pages/Home", () => () => {
-  const ShoppingList = "shoppingList-component-mock";
-  return <ShoppingList />;
-});
-
-test("renders App", async () => {
-  const { container } = render(<App />);
-  expect(container).toMatchInlineSnapshot(`
-    <div>
-      <shoppinglist-component-mock />
-    </div>
-   `);
+test.skip("full app rendering/navigating", async () => {
+  render(<App />);
 });

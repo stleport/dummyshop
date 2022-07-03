@@ -30,7 +30,6 @@ https://thankful-sweater.surge.sh/
 │   ├── pages
 │   └── templates
 ├── constants       /* global constants */
-├── store           /* redux */
 ├── test            /* test helpers */
 └── utils           /* global helpers */
 ```
