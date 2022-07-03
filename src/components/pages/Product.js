@@ -4,68 +4,34 @@ import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import { useClient } from "../../utils/api-client";
 import { theme } from "../../constants/colors";
-import { Loader } from "../atoms/Spinner";
-import { useCart } from "../../utils/hooks";
-import ProductButtons from "../molecules/CartButtons";
+import { SpinnerBlock } from "../atoms/Spinner";
+import Product from "../organisms/Product";
 
-const Product = () => {
+const ProductPage = () => {
   const { id } = useParams();
   const client = useClient();
-  const { data: product, status } = useQuery(["product", id], () =>
-    client(`products/${id}`)
-  );
-  const { incrementCart, decrementCart, cartItems } = useCart();
-
-  const cartItem = cartItems?.find(
-    (cartItem) => cartItem.productId === Number(id)
-  );
+  const {
+    data: product,
+    status,
+    isError,
+  } = useQuery(["product", id], () => client(`products/${id}`));
 
   return (
     <>
-      {status === "loading" ? (
-        <Styled.FullSpaceContainer>
-          <Loader data-testid="loading" />
-        </Styled.FullSpaceContainer>
+      {isError ? (
+        <div role="alert">
+          Oops... An error occurred, please try again later.
+        </div>
+      ) : status === "loading" ? (
+        <SpinnerBlock data-testid="loading" />
       ) : (
-        <Styled.Product>
-          <Styled.CartQuantity>
-            <h1>
-              {`${product?.title} 
-            ${cartItem?.quantity > 0 ? `(x${cartItem?.quantity})` : ""}`}
-            </h1>
-          </Styled.CartQuantity>
-          <Styled.ProductDescription>
-            <img
-              src={product?.image}
-              alt={product?.title}
-              title={product?.title}
-            />
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <p>{product?.description}</p>
-              <p style={{ fontWeight: "bold", fontSize: "1.4rem" }}>
-                {product?.price.toFixed(2)} €
-              </p>
-              <ProductButtons
-                productId={product?.id}
-                quantity={cartItem?.quantity ?? 0}
-                incrementCart={incrementCart}
-                decrementCart={decrementCart}
-              />
-            </div>
-          </Styled.ProductDescription>
-        </Styled.Product>
+        <Product product={product} />
       )}
     </>
   );
 };
 
 export const Styled = {
-  FullSpaceContainer: styled.div`
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: 100vh;
-  `,
   CartQuantity: styled.div`
     margin-bottom: 1.4rem;
   `,
@@ -95,4 +61,4 @@ export const Styled = {
   `,
 };
 
-export default Product;
+export default ProductPage;

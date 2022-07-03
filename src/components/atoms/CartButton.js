@@ -5,15 +5,13 @@ import styled from "styled-components";
 
 const CartButton = ({ primary, disabled, label, onChangeQuantity }) => {
   return (
-    <React.Fragment>
-      <Styled.CartButton
-        onClickButton={onChangeQuantity}
-        primary={primary}
-        disabled={disabled}
-      >
-        {label}
-      </Styled.CartButton>
-    </React.Fragment>
+    <Styled.CartButton
+      onClickButton={onChangeQuantity}
+      primary={primary}
+      disabled={disabled}
+    >
+      {label}
+    </Styled.CartButton>
   );
 };
 

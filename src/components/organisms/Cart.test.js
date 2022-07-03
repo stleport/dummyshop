@@ -59,6 +59,7 @@ test("renders cart with a heading", async () => {
   await waitFor(() => {
     expect(screen.getByRole("heading")).toBeInTheDocument();
   });
+
   userEvent.click(screen.getByRole("button", { name: "+" }));
 
   await waitFor(() =>

@@ -24,7 +24,8 @@ const Styled = {
     justify-content: center;
     width: 2.4rem;
     height: 2.4rem;
-    color: ${(props) => (props.primary ? "white" : theme.colors.primary)};
+    color: ${(props) =>
+      props.primary ? theme.colors.secondary : theme.colors.primary};
     background-color: ${(props) =>
       props.primary ? theme.colors.primary : theme.colors.secondary};
     &:focus,

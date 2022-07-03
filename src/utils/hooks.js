@@ -98,13 +98,16 @@ async function updateCart(newCartItem) {
 
 function useCart() {
   const client = useClient();
-  const { data: cart } = useQuery(["cart"], () => client("carts/1"));
+  const { data: cart } = useQuery(
+    ["cart"],
+    async () => await client("carts/1")
+  );
   const queryClient = useQueryClient();
-  const cartItems = cart?.products.map(({ productId, quantity }) => ({
-    productId,
-    quantity,
-  }));
-
+  const cartItems =
+    cart?.products.map(({ productId, quantity }) => ({
+      productId,
+      quantity,
+    })) || [];
   const {
     mutate,
     isLoading: pending,

@@ -1,18 +1,15 @@
 import React from "react";
 import { render } from "../../test/helpers";
-import userEvent from "@testing-library/user-event";
 import {
   screen,
   waitFor,
   waitForElementToBeRemoved,
-  renderHook,
 } from "@testing-library/react";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
 import { faker } from "@faker-js/faker";
-import { useCart } from "../../utils/hooks";
 import { QueryClient, QueryClientProvider } from "react-query";
-import Product from "./Product";
+import ProductPage from "./Product";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -26,12 +23,22 @@ let product = {
   }),
 };
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retryDelay: 1,
+      retry: 0,
+    },
+  },
+});
+
+const Wrapper = ({ children }) => (
+  <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+);
+
 const server = setupServer(
   rest.get(`${apiUrl}/products/${product.id}`, (req, res, ctx) => {
     return res(ctx.json({ ...product }));
-  }),
-  rest.get(`${apiUrl}/carts/1`, (req, res, ctx) => {
-    return res(ctx.json({ products: [{ productId: 1, quantity: 1 }] }));
   })
 );
 
@@ -39,6 +46,7 @@ beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
 afterAll(() => server.close());
 afterEach(() => server.resetHandlers());
 
+jest.mock("../organisms/Product", () => () => <h1>Product details</h1>);
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
   useParams: () => ({
@@ -47,85 +55,34 @@ jest.mock("react-router-dom", () => ({
 }));
 
 test("renders loading product page", async () => {
-  const productTitle = new RegExp(`${product.title}`);
-
-  render(<Product />);
+  render(<ProductPage />);
   expect(screen.getByTestId(/loading/i)).toBeInTheDocument();
   await waitFor(() => {
     expect(
-      screen.getByRole("heading", { name: productTitle })
+      screen.getByRole("heading", { name: /product details/i })
     ).toBeInTheDocument();
   });
 });
 
-test("increment cart when [+] button is clicked", async () => {
+test("unknown server error displays the error message", async () => {
   server.use(
-    rest.get(`${apiUrl}/carts/1`, (req, res, ctx) => {
-      return res(ctx.json({ products: [{ productId: 1, quantity: 1 }] }));
-    }),
-    rest.put(`${apiUrl}/carts/1`, (req, res, ctx) => {
-      return res(ctx.json({ products: [{ productId: 1, quantity: 2 }] }));
+    rest.get(`${apiUrl}/products/1`, (req, res, ctx) => {
+      return res(ctx.status(500), ctx.json({ message: "someting went wrong" }));
     })
   );
+  const originalError = console.error;
+  console.error = jest.fn();
 
-  const queryClient = new QueryClient();
-  const wrapper = ({ children }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  render(
+    <Wrapper>
+      <ProductPage />
+    </Wrapper>
   );
 
-  render(<Product />);
-
-  await waitForElementToBeRemoved(() => screen.queryByTestId(/loading/i));
-
-  const { result } = renderHook(() => useCart(), {
-    wrapper,
-  });
+  await waitForElementToBeRemoved(await screen.findByTestId("loading"));
 
   await waitFor(() => {
-    return result.current.isSuccess;
+    expect(screen.getByRole("alert")).toBeInTheDocument();
   });
-
-  userEvent.click(screen.getByRole("button", { name: "+" }));
-
-  await waitFor(() =>
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      /\(x2\)$/
-    )
-  );
-});
-
-test("decrement cart when [-] button is clicked", async () => {
-  server.use(
-    rest.get(`${apiUrl}/carts/1`, (req, res, ctx) => {
-      return res(ctx.json({ products: [{ productId: 1, quantity: 5 }] }));
-    }),
-    rest.put(`${apiUrl}/carts/1`, (req, res, ctx) => {
-      return res(ctx.json({ products: [{ productId: 1, quantity: 4 }] }));
-    })
-  );
-
-  const queryClient = new QueryClient();
-  const wrapper = ({ children }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
-
-  render(<Product />);
-
-  await waitForElementToBeRemoved(() => screen.queryByTestId(/loading/i));
-
-  const { result } = renderHook(() => useCart(), {
-    wrapper,
-  });
-
-  await waitFor(() => {
-    return result.current.isSuccess;
-  });
-
-  userEvent.click(screen.getByRole("button", { name: "-" }));
-
-  await waitFor(() =>
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      /\(x4\)$/
-    )
-  );
+  console.error = originalError;
 });

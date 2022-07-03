@@ -1,16 +1,16 @@
 import styled from "styled-components";
-import ProductButtons from "../molecules/CartButtons";
+import CartButtons from "../molecules/CartButtons";
 import { useCart } from "../../utils/hooks";
 import React from "react";
 import { useQuery } from "react-query";
 import { useClient } from "../../utils/api-client";
-import { Loader } from "../atoms/Spinner";
+import { SpinnerBlock } from "../atoms/Spinner";
 
 const CartItem = ({ item, incrementCart, decrementCart }) => {
   return (
     <Styled.CartItemContainer>
       <li key={item.productId}>
-        <ProductButtons
+        <CartButtons
           productId={item.productId}
           quantity={item.quantity}
           incrementCart={incrementCart}
@@ -28,10 +28,11 @@ const CartItem = ({ item, incrementCart, decrementCart }) => {
 
 const Cart = () => {
   const client = useClient();
-  const { data: products, status } = useQuery("productList", () =>
-    client("products")
-  );
   const { incrementCart, decrementCart, cartItems: cart } = useCart();
+  const { data: products, status } = useQuery(
+    "productList",
+    async () => await client("products")
+  );
   const cartItems = cart
     ?.map((cartItem) => ({
       ...cartItem,
@@ -49,12 +50,8 @@ const Cart = () => {
     0
   );
 
-  if (status === "loading")
-    return (
-      <Styled.FullSpaceContainer>
-        <Loader data-testid="cart-loading" />
-      </Styled.FullSpaceContainer>
-    );
+  if (status === "loading") return <SpinnerBlock data-testid="cart-loading" />;
+
   return (
     <>
       <h1
@@ -91,13 +88,6 @@ const Cart = () => {
 };
 
 const Styled = {
-  FullSpaceContainer: styled.div`
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: 100vh;
-    line-height: 1.2rem;
-  `,
   CartItemsList: styled.ul`
     padding: 0.5rem;
     margin: 0;
@@ -138,13 +128,6 @@ const Styled = {
     max-width: 2rem;
     margin: 0 0.9rem;
   `,
-};
-
-Cart.defaultProps = {
-  cart: {
-    products: [],
-    total: 0,
-  },
 };
 
 export default Cart;

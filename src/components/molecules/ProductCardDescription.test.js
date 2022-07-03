@@ -11,11 +11,13 @@ test("renders navigation with one or more link", async () => {
     description: "lorem",
     price: 98,
   };
+
   render(<ProductDescription {...product} />);
+
   expect(
     screen.getByRole("heading", { name: product.title })
   ).toBeInTheDocument();
-  expect(screen.getByText("lorem")).toBeInTheDocument();
+  expect(screen.getByText(product.description)).toBeInTheDocument();
 
   console.error = originalError;
 });

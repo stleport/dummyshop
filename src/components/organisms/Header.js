@@ -12,7 +12,7 @@ import { useClient } from "../../utils/api-client";
 export const Header = () => {
   const [visible, setVisible] = React.useState(false);
   const client = useClient();
-  const { data: cart } = useQuery("cart", () => client("carts/1"));
+  const { data: cart } = useQuery("cart", async () => await client("carts/1"));
   const itemsCount = cart?.products.reduce(
     (acc, current) => acc + current.quantity,
     0
