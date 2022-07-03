@@ -54,12 +54,7 @@ Pour le choix de la librairie, j'ai hésité avec `tailwind css` et ses classes 
 
 ## Etat de l'app
 
-- `redux` pour les données UI 
 - `react-query` pour les données serveur 
-
-### Redux
-
-La gestion du panier est minimaliste, suffisant j'espère pour illustrer une utilisation basique via le panier + les tests qui vont avec
 
 ### React Query
 
