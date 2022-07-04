@@ -39,7 +39,7 @@ afterAll(() => server.close());
 afterEach(() => server.resetHandlers());
 
 test("renders cart with a heading", async () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({ enabled: false });
   const wrapper = ({ children }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );

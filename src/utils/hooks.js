@@ -97,13 +97,12 @@ async function updateCart(newCartItem) {
     body: JSON.stringify(newCartItem),
   }).then(async (res) => await res.json());
 }
-
 function useCart() {
   const client = useClient();
   const { data: cart } = useQuery(
     ["cart"],
     async () => await client("carts/1"),
-    { enabled: false }
+    { enabled: process.env.NODE_ENV === "test" }
   );
   const queryClient = useQueryClient();
   const cartItems =
