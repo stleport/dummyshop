@@ -102,7 +102,8 @@ function useCart() {
   const client = useClient();
   const { data: cart } = useQuery(
     ["cart"],
-    async () => await client("carts/1")
+    async () => await client("carts/1"),
+    { enabled: false }
   );
   const queryClient = useQueryClient();
   const cartItems =
