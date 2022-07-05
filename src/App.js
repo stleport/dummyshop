@@ -1,11 +1,19 @@
-import React, { Suspense } from "react";
-import ShoppingList from "./components/pages/Home";
+import React from "react";
+import ShopLayout from "./components/templates/ShopLayout";
+import Home from "./components/pages/Home";
+import Product from "./components/pages/Product";
+import NoMatch from "./components/pages/NoMatch";
+import { Routes, Route } from "react-router-dom";
 
 export function App() {
   return (
-    <Suspense fallback={<div>Loading</div>}>
-      <ShoppingList data-testid="product-list" />
-    </Suspense>
+    <ShopLayout>
+      <Routes>
+        <Route path="/" element={<Home data-testid="product-list" />} />
+        <Route path="products/:id" element={<Product />} />
+        <Route path="*" element={<NoMatch />} />
+      </Routes>
+    </ShopLayout>
   );
 }
 

@@ -1,6 +1,6 @@
 import React from "react";
 import ProductList from "../organisms/ProductList";
 
-const ShoppingList = () => <ProductList />;
+const Home = () => <ProductList />;
 
-export default ShoppingList;
+export default Home;
